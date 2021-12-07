@@ -1,0 +1,69 @@
+@startuml style
+' style 
+
+skinparam shadowing false
+skinparam roundcorner 40
+skinparam backgroundColor transparent
+skinparam ParticipantPadding 20
+skinparam BoxPadding 30
+skinparam Padding 3
+skinparam lifelineStrategy nosolid
+skinparam FontStyle bold
+
+
+skinparam Participant{
+  BackgroundColor #11cad6
+  FontSize 17
+  FontColor white
+}
+
+skinparam Actor{
+  BorderColor #383D4D
+  BackgroundColor transparent
+  FontColor #383D4D
+  FontSize 17
+}
+
+
+skinparam Sequence {
+  MessageAlign center
+  ArrowThickness 2.5
+  ParticipantBorderThickness 0
+  ArrowFontColor #373C4B
+  ArrowColor #373C4B
+
+  LifeLineBorderColor #cccdd1
+  LifeLineBorderThickness 2.5
+  LifeLineBackgroundColor #cccdd1
+}
+
+skinparam SequenceGroup {
+  BackgroundColor #373c4b
+  BodyBackgroundColor #e1e1e4
+  HeaderFontColor white
+  BorderThickness 0
+}
+
+skinparam note {
+  BackgroundColor #9B9EA6
+  HeaderFontColor white
+  BorderThickness 0
+}
+
+
+skinparam SequenceReference {
+  BackgroundColor #e1e1e4
+  HeaderFontColor white
+  HeaderBackgroundColor #373c4b
+  BorderThickness 0
+}
+
+
+skinparam sequenceDivider{
+  BackgroundColor #373c4b
+  FontColor white
+  roundcorner 3
+  BorderThickness 0
+}
+
+@enduml
