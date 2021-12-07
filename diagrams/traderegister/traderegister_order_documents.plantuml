@@ -1,0 +1,78 @@
+@startuml traderegister_order_documents
+!include ../style.plantuml
+
+' lifeline definition
+actor       "User"           as user
+participant "Rawdata API"    as rdi
+participant "Keycloak"       as keycloak
+participant "Trade Register" as traderegister
+
+title Order documents from the trade register
+
+' setup autonumber to use three segments (A.B.C)
+' use autonumber inc [ABC] to increase earch segment.
+autonumber 1.1.1
+
+' TODO: get available court types 
+
+user -> rdi : Request court types
+rdi -> user : List of available court types
+
+...
+
+' TODO: get available document types 
+
+autonumber inc A
+user -> rdi : Request document types
+rdi -> user : List of available document types
+
+...
+
+' == get available documents ==
+
+autonumber inc A
+user -> keycloak : Authentication request
+keycloak -> user : Respond with token
+
+...
+
+autonumber inc A
+
+note over user
+  this request requires a court type. 
+  This can be obtained by using the 
+  1.1.1 request
+end note
+user -> rdi : Search company
+rdi -> user : Search resuls
+
+autonumber inc B
+
+user -> rdi          : Get available documents
+rdi -> traderegister : Get available documents
+traderegister -> rdi : Available document types
+rdi -> user          : Available document types
+
+...
+
+' == download document ==
+autonumber inc A
+
+group order document [for each document you want to order]
+
+  note over user
+    this request requires a document type.
+    This can be obtained by using the 
+    2.1.1 request
+  end note
+
+  user -> rdi          : Request document
+  rdi -> traderegister : Request document
+  traderegister -> rdi : Ordered document
+  rdi -> user          : Ordered document
+...
+end
+
+@enduml
+
+
