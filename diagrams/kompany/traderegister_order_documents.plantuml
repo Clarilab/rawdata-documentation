@@ -4,8 +4,6 @@
 ' lifeline definition
 actor       "User"           as user
 participant "Rawdata API"    as rdi
-participant "Kompany"        as kompany
-participant "Document Store" as s3
 
 title Order documents from the kompany API
 
@@ -22,9 +20,7 @@ autonumber 1.1
 ' search company by name and  countryCode
 
 user -> rdi    : Search for a company by Name and CountryCode
-rdi -> kompany : Forward search to get live results
-kompany -> rdi : List of companies found with the given criteria
-rdi -> user    : <b>200:</b> Forward results
+rdi -> user    : <b>200:</b> A list of matching companies
 
 ...
 
@@ -33,35 +29,17 @@ autonumber inc A
 ' get available documents for a specific company
 
 user -> rdi    : With the subjectID from the search above\nrequest a list of available products / documents for the company
-rdi -> kompany : Forward search to get live results
-kompany -> rdi : List of available products / documents for the requested company
-rdi -> user    : <b>200:</b> Forward results
+rdi -> user    : <b>200:</b> A list of available products for the requested company
 
 ...
 
-' resetup autonumber to use three segments (A.B.C)
-' use autonumber inc [ABC] to increase earch segment.
-autonumber 3.1.1
+autonumber inc A
 
 ' order a document
 
 
 user -> rdi    : Order a document with the subjectID of the company and the SKU you want to oder
-rdi -> kompany : Forward the order
-
-activate kompany
-
-kompany -> rdi : Return the ID of the order
-rdi -> user    : <b>200:</b> Forward the ID resonse
-
-...
-
-autonumber inc B
-
-kompany -> s3 : Once the order is complete,\ndownload the document and put it in the docuemntstore
-s3 -> kompany : Document stored
-
-deactivate kompany
+rdi -> user    : <b>200:</b> order ID
 
 ...
 
@@ -70,24 +48,16 @@ autonumber inc A
 ' get order status
 
 user -> rdi    : Get status of the order
-rdi -> kompany : Get the status
-kompany -> rdi : Current status of the order
 
 alt order succeeded
-
-  autonumber inc B
 
   rdi -> user : <b>200:</b> The order is ready
 
 else order is not ready yet
 
-  autonumber inc B
-
   rdi -> user : <b>200:</b> The order did not fail, but is also not ready yet
 
 else order failed
-
-  autonumber inc B
 
   rdi -> user : <b>200:</b> The order failed
 
@@ -103,20 +73,10 @@ user -> rdi : Request document
 
 alt order is ready
 
-  autonumber inc B
-
-  rdi -> kompany   : Lookup the status
-  kompany -> rdi   : Order is not ready or failed
   rdi -> user      : <b>404:</b> Document not found
 
 else order is not ready
 
-  autonumber inc B
-
-  rdi -> kompany   : Lookup the status
-  kompany -> rdi   : Order is ready
-  rdi -> s3        : Fetch the document
-  s3 -> rdi        : Return the ordered document
   rdi -> user      : <b>200:</b> The ordered document
 
 end
